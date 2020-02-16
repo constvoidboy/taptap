@@ -68,7 +68,7 @@ char *pickBlabla(void)
 			/* check if it is a regular file */
 			if(dir->d_type == DT_REG && i<= MAX_FILES_COUNT)
 			{
-				printf("\t%d] - %s", i, dir->d_name);
+				printf("\t%d] - %-20s ", i, dir->d_name);
 				/* add 1 to size for null char */ 
 				fileList[i] = calloc(strlen(dir->d_name)+1, sizeof(char));
 				sprintf(fileList[i], "%s", dir->d_name); 

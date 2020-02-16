@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROW_SIZE  16
+#define ASCII_MIN 0x21
+#define ASCII_MAX 0x7e
+
+struct dump
+{
+	char *buff;
+	long  size;
+};
+
+int main(int argc, char *argv[])
+{
+	struct dump d;
+	FILE      *fp;
+	int	  i,j;
+	int   padding;
+
+	if (argc != 2)
+	{
+		printf("Usage %s <filename>", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	if ((fp = fopen(argv[1], "rb")) == NULL)
+	{
+		printf("open %s failed", argv[1]);
+		exit(EXIT_FAILURE);
+	}
+
+	fseek(fp, 0, SEEK_END);
+	d.size = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	d.buff = malloc(sizeof(char) * d.size);
+	fread(d.buff, sizeof(char), d.size, fp);
+	for(i=0; i < d.size; i+=ROW_SIZE)
+	{
+		for(j=0; j < ROW_SIZE; j++)
+		{
+			if(j+i >= d.size)
+			{
+				padding = (ROW_SIZE - j) * 3;
+				while(padding--)
+					printf(" ");
+				break;
+			}
+			printf("%02x ", d.buff[i+j]);
+		}
+		printf(" | ");
+		for(j=0; j < ROW_SIZE; j++)
+		{
+			if(j+i >= d.size)
+				break;
+			if (d.buff[i+j] >= ASCII_MIN &&
+			    d.buff[i+j] <= ASCII_MAX)
+				printf("%c", d.buff[i+j]);
+			else
+				printf(".");
+		}
+		printf("\n");
+	}
+	free(d.buff);
+	fclose(fp);
+	return EXIT_SUCCESS;
+}

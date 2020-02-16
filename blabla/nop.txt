@@ -1,0 +1,97 @@
+section .data
+usage: db 'Usage ./solve [name]',0
+newline: db 10
+
+global _start
+section .text
+
+print_newline:
+	mov	rax, 1
+	mov	rdx, 1
+	mov	rdi, 1
+	mov	rsi, newline
+	syscall
+	ret
+
+exit:
+	mov	rax, 60
+	syscall
+
+string_length:
+	xor rax, rax 
+.loop:
+	cmp	byte [rdi+rax], 0
+	jz	.end 
+	inc	rax
+	jmp	.loop
+.end:
+	ret 
+
+print_string:
+	push	rdi
+	call	string_length
+	pop	rsi
+	mov	rdx, rax
+	mov	rax, 1
+	mov	rdi, 1
+	syscall
+	ret
+
+print_uint:
+	mov	rax, rdi
+	mov	rdi, rsp
+	push	0
+	sub	rsp, 16
+	mov	r8, 10
+	dec	rdi
+.loop:
+	xor	rdx, rdx
+	div	r8
+	or	rdx, 0x30
+	dec	rdi
+	mov	[rdi], dl
+	test	rax, rax
+	jnz	.loop
+.end:
+	call	print_string
+	add	rsp, 24
+	ret
+
+_start:
+	cmp	byte [rsp], 0x2
+	jne	.usage
+	mov	rsi, [rsp+0x10]
+	xor	rcx, rcx
+	xor	rax, rax
+.loop:
+	mov	dl, [rsi+rcx]
+	add	rax, rdx
+	test	rdx, rdx
+	jz	.next
+	inc	rcx
+	jmp	.loop
+.next:
+	mov	rcx, rax
+	mov	rsi, [rsp+0x10]
+	mov	byte al, [rsi]
+	mov	r8, 3
+	mul	r8
+	xor	rax, rcx
+	mov	rdi, [rsp+0x8]
+	push	rax
+	call 	string_length
+	pop	rcx
+.again:
+	shl	rcx, 1
+	dec	rax
+	test	rax, rax
+	jnz	.again
+	mov	rdi, rcx
+	call	print_uint
+	call	print_newline
+	call	exit
+.usage:
+	mov	rdi, usage
+	call	print_string
+	call	print_newline
+	call 	exit
