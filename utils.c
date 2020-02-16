@@ -132,7 +132,7 @@ int retrvInpt(char *path, char **s)
 
 void blzConstr(char s[])
 {
-	unsigned int i = 1;
+	static unsigned int i = 1;
 
 	if(i == 0)
 		s[BLA_SIZE - 1] = s[BLA_SIZE - 1] + 0x20;
@@ -145,7 +145,7 @@ void blzConstr(char s[])
 void barConstr(char s[])
 {
 	unsigned int j = 0;
-	unsigned int i = 0;
+	static unsigned int i = 0;
 
 	for(; j < strlen(BAR); j++)
 	{
