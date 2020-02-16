@@ -1,0 +1,12 @@
+void freeBobby(int count, ...);
+void cleanBuf(char *buff, int size);
+void preview(const char *f);
+char *pickBlabla(void);
+void initPly(struct ply *p);
+int retrvInpt(char *path, char **s);
+void blzConstr(char s[]);
+void barConstr(char s[]);
+void bienvenue(void);
+void enableRaw(struct termios *new, struct termios *old);
+void disablRaw(struct termios *old);
+enum BOOL checkInput(char c, struct tap *t);
